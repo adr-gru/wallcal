@@ -50,7 +50,7 @@ void setup()
   display.hibernate();
 }
 
-const char HelloWorld[] = "Hello World!";
+const char HelloWorld[] = "Adrian ROCKS!!!!";
 
 void helloWorld()
 {
