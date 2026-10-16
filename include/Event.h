@@ -9,6 +9,4 @@ class Event {
     int64_t endDate;
     bool allDay;
 
-    bool inRangeOfEvent(int date) const;
-
 };
