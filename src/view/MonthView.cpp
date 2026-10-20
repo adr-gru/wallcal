@@ -36,12 +36,14 @@ void MonthView::draw(Adafruit_GFX& view){
 }
 
  void MonthView::drawHeader(Adafruit_GFX& view){
+  uint16_t columnWidth = width / 7;
   view.drawRoundRect(0, 0, width, height, 10, color);
   view.fillRect(0, height / 5, width, 10, color);
-  view.setCursor(30, (height/5) + 30);
-  for(int counter = 0; counter < 7; counter++){
-    view.print(days[counter]);
-    view.setCursor(view.getCursorX() + 80, (height/5) + 30);
+  view.setCursor(40, (height/5) + 30);
+  for(int counter = 1; counter <= 7; counter++){
+    view.print(days[counter-1]);
+    view.setCursor(40 + (counter * columnWidth), view.getCursorY());
+
   }   
   view.drawLine(0, heightOfHeader, width, heightOfHeader, color);
   view.setCursor(20, (height/5) - 20); 
