@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <driver/gpio.h>
 #include <GxEPD2_BW.h>
 #include <../include/MonthView.h>
 #include <Fonts/FreeMonoBold9pt7b.h>
@@ -8,17 +9,33 @@ GxEPD2_BW<GxEPD2_750_GDEY075T7, GxEPD2_750_GDEY075T7::HEIGHT> display(GxEPD2_750
 MonthView view;
 
 void setup(){
-   
-  display.init(115200, true, 10, false); // USE THIS for Waveshare boards with "clever" reset circuit, 2ms reset pulse  
+
+  // SPI wiring rings at full speed and garbles the image: slow the clock and soften SCK/MOSI edges
+  display.epd2.selectSPI(SPI, SPISettings(1000000, MSBFIRST, SPI_MODE0));
+  display.init(115200, true, 2, false); // USE THIS for Waveshare boards with "clever" reset circuit, 2ms reset pulse  
+  gpio_set_drive_capability(GPIO_NUM_18, GPIO_DRIVE_CAP_0); // SCK
+  gpio_set_drive_capability(GPIO_NUM_23, GPIO_DRIVE_CAP_0); // MOSI
   display.setRotation(0);
   display.setFont(&FreeMonoBold9pt7b);
   display.setTextColor(GxEPD_BLACK); 
   display.setFullWindow();
   display.firstPage();
+
+  struct tm date = {};      // zeroed, so no garbage fields
+  date.tm_year = 2026 - 1900;
+  date.tm_mon  = 9;
+  date.tm_mday = 19;
+
+  time_t timeInSecs = mktime(&date);
+  struct timeval currentTime;
+  currentTime.tv_sec = timeInSecs;
+  currentTime.tv_usec = 0;
+
+  settimeofday(&currentTime, NULL);
   do
   {
     display.fillScreen(GxEPD_WHITE); 
-    view.draw(display, 30,10,2026);
+    view.draw(display);
   }
   while (display.nextPage());
 
